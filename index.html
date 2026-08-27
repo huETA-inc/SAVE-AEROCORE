@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAVE AEROCORE</title>
+    <style>
+        /* =========================================
+           FRUTIGER AERO & WEB 1.0 VISUAL NOISE 
+           ========================================= */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            /* Типичный градиент: чистое небо переходит в зеленую траву */
+            background: linear-gradient(180deg, #6ec6ff 0%, #2196f3 40%, #00e676 80%, #b2ff59 100%);
+            background-attachment: fixed;
+            color: #003366;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* Визуальный шум: пузырьки и блики на заднем фоне */
+        .bubbles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.5) 0%, transparent 5%),
+                radial-gradient(circle at 80% 60%, rgba(255,255,255,0.4) 0%, transparent 8%),
+                radial-gradient(circle at 40% 80%, rgba(255,255,255,0.6) 0%, transparent 4%),
+                radial-gradient(circle at 70% 10%, rgba(255,255,255,0.3) 0%, transparent 6%);
+            background-size: 200% 200%;
+            animation: moveBubbles 20s linear infinite;
+            z-index: 1;
+        }
+        @keyframes moveBubbles {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        /* Бегущая строка (привет Web 1.0) */
+        marquee {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            font-size: 1.2rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        /* =========================================
+           MAIN CONTAINER (GLASSMORPHISM)
+           ========================================= */
+        .container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.45);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 40px;
+            width: 500px;
+            text-align: center;
+            /* Тот самый глянцевый эффект стекла */
+            box-shadow: 
+                inset 0 10px 20px rgba(255, 255, 255, 0.9),
+                0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+        }
+
+        h1 {
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+            margin-bottom: 5px;
+        }
+        
+        .link {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: #005bb5;
+            font-weight: bold;
+            text-decoration: none;
+            background: rgba(255,255,255,0.5);
+            padding: 5px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        /* =========================================
+           PROGRESS BAR
+           ========================================= */
+        .progress-container {
+            background: rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 30px;
+            height: 35px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 38%; /* Начальное значение 33.49/88 ~ 38% */
+            background: linear-gradient(to bottom, #76ff03 0%, #64dd17 50%, #1b5e20 51%, #4caf50 100%);
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.8);
+            transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .stats {
+            font-weight: bold;
+            font-size: 18px;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.9);
+            margin-bottom: 20px;
+        }
+
+        /* =========================================
+           GLOSSY BUTTONS
+           ========================================= */
+        .btn {
+            background: linear-gradient(to bottom, #81d4fa 0%, #29b6f6 45%, #0288d1 50%, #03a9f4 100%);
+            border: 1px solid #01579b;
+            border-radius: 25px;
+            color: white;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 4px 6px rgba(0,0,0,0.2);
+            transition: transform 0.1s, filter 0.2s;
+        }
+        .btn:hover { filter: brightness(1.15); }
+        .btn:active { transform: scale(0.95); box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); }
+
+        /* =========================================
+           MODAL WINDOW
+           ========================================= */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            border: 3px solid white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 5px 15px rgba(255,255,255,1);
+        }
+
+        input[type="email"], input[type="number"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #4fc3f7;
+            border-radius: 8px;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #loading { display: none; margin-top: 15px; font-weight: bold; color: #0288d1; }
+        
+        .loader-spinner {
+            display: inline-block;
+            width: 30px; height: 30px;
+            border: 4px solid #b3e5fc;
+            border-top: 4px solid #0288d1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #success-msg { display: none; color: #1b5e20; font-weight: bold; margin-top: 15px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="bubbles"></div>
+    <marquee scrollamount="8">СБОР ДЕНЕГ НА ####ÆROCORE drumkit2024 @go1deen ХЕЛПАНИТЕ ПЛИЗ</marquee>
+
+    <div class="container">
+        <h1>####ÆROCORE drumkit2024</h1>
+        <a href="https://payhip.com/b/ZQc8w" target="_blank" class="link">@go1deen (https://payhip.com/b/ZQc8w)</a>
+
+        <div class="stats">
+            Собрано: <span id="current-amount">33.49</span> EUR / 88.00 EUR
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <button class="btn" onclick="openModal()">Пожертвовать</button>
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-box">
+            <div id="payment-form">
+                <h3 style="margin-top:0;">Оформление поддержки</h3>
+                <input type="email" id="user-email" placeholder="Ваш E-mail" required>
+                <input type="number" id="donation-amount" placeholder="Сумма (EUR)" step="0.01" min="1" required>
+                <br><br>
+                <button class="btn" onclick="startPayment()">Перейти к оплате</button>
+                <br><br>
+                <a href="#" onclick="closeModal()" style="color: grey; font-size: 12px;">Отмена</a>
+            </div>
+
+            <div id="loading">
+                <div class="loader-spinner"></div><br>
+                Связь с банком... Пожалуйста, подождите.
+            </div>
+
+            <div id="success-msg">
+                <p>✅ <b>Успех!</b></p>
+                <p>Мы нашли привязанную к вашему браузеру банковскую картошку и с нее была успешно списана сумма пожертвования.</p>
+                <button class="btn" onclick="finishAndClose()" style="padding: 10px 20px; font-size: 16px;">Отлично</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAmount = 33.49;
+        const targetAmount = 88.00;
+
+        // Открытие/закрытие модалки
+        function openModal() {
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.getElementById('payment-form').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('success-msg').style.display = 'none';
+            document.getElementById('donation-amount').value = '';
+            document.getElementById('user-email').value = '';
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        // Логика "оплаты"
+        function startPayment() {
+            const amountInput = document.getElementById('donation-amount').value;
+            const emailInput = document.getElementById('user-email').value;
+
+            if(!amountInput || !emailInput || amountInput <= 0) {
+                alert("Пожалуйста, введите Email и корректную сумму!");
+                return;
+            }
+
+            // Прячем форму, показываем загрузку
+            document.getElementById('payment-form').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            // Фейковая задержка обработки (3 секунды)
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('success-msg').style.display = 'block';
+            }, 3000);
+        }
+
+        // Применение изменений после нажатия "Отлично"
+        function finishAndClose() {
+            const addedAmount = parseFloat(document.getElementById('donation-amount').value);
+            
+            // Обновляем сумму
+            currentAmount += addedAmount;
+            
+            // Ограничиваем шкалу до 100% максимум для красивого отображения (или можно дать ей выйти за рамки)
+            let percentage = (currentAmount / targetAmount) * 100;
+            if(percentage > 100) percentage = 100;
+
+            // Анимация интерфейса
+            document.getElementById('current-amount').innerText = currentAmount.toFixed(2);
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            closeModal();
+        }
+    </script>
+</body>
+</html>
