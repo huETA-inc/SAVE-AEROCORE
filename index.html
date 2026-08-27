@@ -107,7 +107,7 @@
             width: 38%;
             background: linear-gradient(to bottom, #76ff03 0%, #64dd17 50%, #1b5e20 51%, #4caf50 100%);
             box-shadow: inset 0 2px 5px rgba(255,255,255,0.8);
-            transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: width 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .stats {
@@ -135,16 +135,6 @@
         }
         .btn:hover { filter: brightness(1.15); }
         .btn:active { transform: scale(0.95); box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); }
-
-        /* Кнопка сброса (для теста) */
-        .reset-link {
-            display: block;
-            margin-top: 15px;
-            font-size: 11px;
-            color: rgba(0, 51, 102, 0.6);
-            text-decoration: underline;
-            cursor: pointer;
-        }
 
         /* =========================================
            MODAL WINDOW
@@ -214,9 +204,6 @@
         </div>
 
         <button class="btn" onclick="openModal()">Пожертвовать</button>
-        
-        <!-- Небольшая ссылка для сброса данных, если захочешь протестировать заново -->
-        <span class="reset-link" onclick="resetProgress()">[сбросить прогресс]</span>
     </div>
 
     <!-- Модальное окно -->
@@ -249,23 +236,27 @@
         const defaultAmount = 33.49;
         const targetAmount = 88.00;
         let currentAmount = defaultAmount;
+        let pendingDonation = 0;
 
-        // Загрузка сохраненного значения при открытии страницы
-        window.onload = function() {
-            const savedAmount = localStorage.getItem('aero_donated_amount');
-            if (savedAmount !== null) {
-                currentAmount = parseFloat(savedAmount);
+        // Загружаем сохраненные данные сразу при готовности DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedAmount = localStorage.getItem('aero_donated_total');
+            if (savedAmount) {
+                const parsed = parseFloat(savedAmount);
+                if (!isNaN(parsed)) {
+                    currentAmount = parsed;
+                }
             }
             updateUI();
-        };
+        });
 
         // Функция обновления шкалы и цифр на экране
         function updateUI() {
             let percentage = (currentAmount / targetAmount) * 100;
-            if (percentage > 100) percentage = 100;
+            let visualWidth = percentage > 100 ? 100 : percentage;
 
             document.getElementById('current-amount').innerText = currentAmount.toFixed(2);
-            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('progress-bar').style.width = visualWidth + '%';
         }
 
         function openModal() {
@@ -285,10 +276,15 @@
             const amountInput = document.getElementById('donation-amount').value;
             const emailInput = document.getElementById('user-email').value;
 
-            if(!amountInput || !emailInput || amountInput <= 0) {
+            const parsedVal = parseFloat(amountInput);
+
+            if(!amountInput || !emailInput || isNaN(parsedVal) || parsedVal <= 0) {
                 alert("Пожалуйста, введите Email и корректную сумму!");
                 return;
             }
+
+            // Запоминаем вложенную сумму
+            pendingDonation = parsedVal;
 
             document.getElementById('payment-form').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
@@ -300,25 +296,16 @@
         }
 
         function finishAndClose() {
-            const addedAmount = parseFloat(document.getElementById('donation-amount').value);
-            
-            // Прибавляем сумму
-            currentAmount += addedAmount;
-            
-            // Запоминаем в локальном хранилище браузера
-            localStorage.setItem('aero_donated_amount', currentAmount);
-
-            // Обновляем визуальную часть
-            updateUI();
+            if (pendingDonation > 0) {
+                // Прибавляем и записываем
+                currentAmount += pendingDonation;
+                localStorage.setItem('aero_donated_total', currentAmount.toString());
+                
+                pendingDonation = 0;
+                updateUI();
+            }
 
             closeModal();
-        }
-
-        // Функция сброса для отладки
-        function resetProgress() {
-            localStorage.removeItem('aero_donated_amount');
-            currentAmount = defaultAmount;
-            updateUI();
         }
     </script>
 </body>
