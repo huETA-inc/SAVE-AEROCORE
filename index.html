@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAVE AEROCORE</title>
+    <title>ÆROCORE drumkit2024 - DONATION</title>
     <style>
         /* =========================================
            FRUTIGER AERO & WEB 1.0 VISUAL NOISE 
@@ -12,7 +12,6 @@
             margin: 0;
             padding: 0;
             font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-            /* Типичный градиент: чистое небо переходит в зеленую траву */
             background: linear-gradient(180deg, #6ec6ff 0%, #2196f3 40%, #00e676 80%, #b2ff59 100%);
             background-attachment: fixed;
             color: #003366;
@@ -24,7 +23,6 @@
             height: 100vh;
         }
 
-        /* Визуальный шум: пузырьки и блики на заднем фоне */
         .bubbles {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -43,7 +41,6 @@
             100% { background-position: 100% 100%; }
         }
 
-        /* Бегущая строка (привет Web 1.0) */
         marquee {
             position: absolute;
             top: 10px;
@@ -66,7 +63,6 @@
             padding: 40px;
             width: 500px;
             text-align: center;
-            /* Тот самый глянцевый эффект стекла */
             box-shadow: 
                 inset 0 10px 20px rgba(255, 255, 255, 0.9),
                 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -108,7 +104,7 @@
 
         .progress-bar {
             height: 100%;
-            width: 38%; /* Начальное значение 33.49/88 ~ 38% */
+            width: 38%;
             background: linear-gradient(to bottom, #76ff03 0%, #64dd17 50%, #1b5e20 51%, #4caf50 100%);
             box-shadow: inset 0 2px 5px rgba(255,255,255,0.8);
             transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -139,6 +135,16 @@
         }
         .btn:hover { filter: brightness(1.15); }
         .btn:active { transform: scale(0.95); box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); }
+
+        /* Кнопка сброса (для теста) */
+        .reset-link {
+            display: block;
+            margin-top: 15px;
+            font-size: 11px;
+            color: rgba(0, 51, 102, 0.6);
+            text-decoration: underline;
+            cursor: pointer;
+        }
 
         /* =========================================
            MODAL WINDOW
@@ -193,7 +199,7 @@
 <body>
 
     <div class="bubbles"></div>
-    <marquee scrollamount="8">СБОР ДЕНЕГ НА ####ÆROCORE drumkit2024 @go1deen ХЕЛПАНИТЕ ПЛИЗ</marquee>
+    <marquee scrollamount="8">🔥 HELP ME RELEASE ####ÆROCORE drumkit2024 @go1deen 🔥 SUPPORT THE CREATOR 🔥 100% REAL TRANSACTIONS 🔥</marquee>
 
     <div class="container">
         <h1>####ÆROCORE drumkit2024</h1>
@@ -208,8 +214,12 @@
         </div>
 
         <button class="btn" onclick="openModal()">Пожертвовать</button>
+        
+        <!-- Небольшая ссылка для сброса данных, если захочешь протестировать заново -->
+        <span class="reset-link" onclick="resetProgress()">[сбросить прогресс]</span>
     </div>
 
+    <!-- Модальное окно -->
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal-box">
             <div id="payment-form">
@@ -236,10 +246,28 @@
     </div>
 
     <script>
-        let currentAmount = 33.49;
+        const defaultAmount = 33.49;
         const targetAmount = 88.00;
+        let currentAmount = defaultAmount;
 
-        // Открытие/закрытие модалки
+        // Загрузка сохраненного значения при открытии страницы
+        window.onload = function() {
+            const savedAmount = localStorage.getItem('aero_donated_amount');
+            if (savedAmount !== null) {
+                currentAmount = parseFloat(savedAmount);
+            }
+            updateUI();
+        };
+
+        // Функция обновления шкалы и цифр на экране
+        function updateUI() {
+            let percentage = (currentAmount / targetAmount) * 100;
+            if (percentage > 100) percentage = 100;
+
+            document.getElementById('current-amount').innerText = currentAmount.toFixed(2);
+            document.getElementById('progress-bar').style.width = percentage + '%';
+        }
+
         function openModal() {
             document.getElementById('modal-overlay').style.display = 'flex';
             document.getElementById('payment-form').style.display = 'block';
@@ -253,7 +281,6 @@
             document.getElementById('modal-overlay').style.display = 'none';
         }
 
-        // Логика "оплаты"
         function startPayment() {
             const amountInput = document.getElementById('donation-amount').value;
             const emailInput = document.getElementById('user-email').value;
@@ -263,33 +290,35 @@
                 return;
             }
 
-            // Прячем форму, показываем загрузку
             document.getElementById('payment-form').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
 
-            // Фейковая задержка обработки (3 секунды)
             setTimeout(() => {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('success-msg').style.display = 'block';
             }, 3000);
         }
 
-        // Применение изменений после нажатия "Отлично"
         function finishAndClose() {
             const addedAmount = parseFloat(document.getElementById('donation-amount').value);
             
-            // Обновляем сумму
+            // Прибавляем сумму
             currentAmount += addedAmount;
             
-            // Ограничиваем шкалу до 100% максимум для красивого отображения (или можно дать ей выйти за рамки)
-            let percentage = (currentAmount / targetAmount) * 100;
-            if(percentage > 100) percentage = 100;
+            // Запоминаем в локальном хранилище браузера
+            localStorage.setItem('aero_donated_amount', currentAmount);
 
-            // Анимация интерфейса
-            document.getElementById('current-amount').innerText = currentAmount.toFixed(2);
-            document.getElementById('progress-bar').style.width = percentage + '%';
+            // Обновляем визуальную часть
+            updateUI();
 
             closeModal();
+        }
+
+        // Функция сброса для отладки
+        function resetProgress() {
+            localStorage.removeItem('aero_donated_amount');
+            currentAmount = defaultAmount;
+            updateUI();
         }
     </script>
 </body>
